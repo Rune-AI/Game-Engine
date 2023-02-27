@@ -9,8 +9,10 @@ dae::TextObject::TextObject(const std::string& text, std::shared_ptr<Font> font)
 	: m_needsUpdate(true), m_text(text), m_font(std::move(font)), m_textTexture(nullptr)
 { }
 
-void dae::TextObject::Update()
+void dae::TextObject::Update(GameObject& go)
 {
+	go.GetTransfrom();
+	
 	if (m_needsUpdate)
 	{
 		const SDL_Color color = { 255,255,255 }; // only white text is supported now
@@ -30,11 +32,12 @@ void dae::TextObject::Update()
 	}
 }
 
-void dae::TextObject::Render() const
+void dae::TextObject::Render(const GameObject& go) const
 {
 	if (m_textTexture != nullptr)
 	{
-		const auto& pos = m_transform.GetPosition();
+		
+		const auto& pos = go.GetTransfrom().GetPosition();
 		Renderer::GetInstance().RenderTexture(*m_textTexture, pos.x, pos.y);
 	}
 }
@@ -44,11 +47,6 @@ void dae::TextObject::SetText(const std::string& text)
 {
 	m_text = text;
 	m_needsUpdate = true;
-}
-
-void dae::TextObject::SetPosition(const float x, const float y)
-{
-	m_transform.SetPosition(x, y, 0.0f);
 }
 
 

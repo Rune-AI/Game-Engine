@@ -4,11 +4,13 @@
 #include <SDL.h>
 #include <SDL_image.h>
 #include <SDL_ttf.h>
+#include <chrono>
 #include "Minigin.h"
 #include "InputManager.h"
 #include "SceneManager.h"
 #include "Renderer.h"
 #include "ResourceManager.h"
+#include "Time.h"
 
 SDL_Window* g_window{};
 
@@ -82,13 +84,33 @@ void dae::Minigin::Run(const std::function<void()>& load)
 	auto& renderer = Renderer::GetInstance();
 	auto& sceneManager = SceneManager::GetInstance();
 	auto& input = InputManager::GetInstance();
+	auto& time = Time::GetInstance();
 
-	// todo: this update loop could use some work.
 	bool doContinue = true;
+	time.CalculateDeltaTime();
+	//auto lastTime = std::chrono::high_resolution_clock::now();
+	float lag = 0.0f;
+	float fixedTimeStep = 0.03f;
 	while (doContinue)
 	{
+		time.CalculateDeltaTime();
+
+		/*const auto currentTime = std::chrono::high_resolution_clock::now();
+		const float deltaTime = std::chrono::duration<float>(currentTime - lastTime).count();
+		lastTime = currentTime;*/
+		
+		lag += time.GetDeltaTime();
 		doContinue = input.ProcessInput();
+		while (lag >= fixedTimeStep)
+		{
+			sceneManager.FixedUpdate(); // This won't work, would keep calling fixed update untill fixedtimestep is over. let's see coroutines before fixing this.
+			lag -= fixedTimeStep;
+		}
 		sceneManager.Update();
+		sceneManager.LateUpdate();
 		renderer.Render();
 	}
+
+
+	
 }
