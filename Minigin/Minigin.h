@@ -14,6 +14,6 @@ namespace dae
 		Minigin(const Minigin& other) = delete;
 		Minigin(Minigin&& other) = delete;
 		Minigin& operator=(const Minigin& other) = delete;
-		Minigin& operator=(Minigin&& other) = delete;
+		Minigin& operator=(Minigin&& other) = delete;	
 	};
 }

@@ -89,8 +89,7 @@ void dae::Minigin::Run(const std::function<void()>& load)
 	bool doContinue = true;
 	time.CalculateDeltaTime();
 	//auto lastTime = std::chrono::high_resolution_clock::now();
-	float lag = 0.0f;
-	float fixedTimeStep = 0.03f;
+	float lag{};
 	while (doContinue)
 	{
 		time.CalculateDeltaTime();
@@ -101,14 +100,16 @@ void dae::Minigin::Run(const std::function<void()>& load)
 		
 		lag += time.GetDeltaTime();
 		doContinue = input.ProcessInput();
-		while (lag >= fixedTimeStep)
+		while (lag >= time.GetFixedTimeStep())
 		{
-			sceneManager.FixedUpdate(); // This won't work, would keep calling fixed update untill fixedtimestep is over. let's see coroutines before fixing this.
-			lag -= fixedTimeStep;
+			sceneManager.FixedUpdate();
+			lag -= time.GetFixedTimeStep();
 		}
 		sceneManager.Update();
 		sceneManager.LateUpdate();
 		renderer.Render();
+
+		Sleep(DWORD(time.GetSleepTime()));
 	}
 
 

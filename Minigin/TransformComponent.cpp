@@ -1,0 +1,172 @@
+//#include "TransformComponent.h"
+//#include <glm/gtc/quaternion.hpp>
+//
+//#pragma warning(push)
+//#pragma warning(disable: 4201)
+//#include <glm/gtx/quaternion.hpp>
+//#pragma warning(pop)
+//
+//dae::TransformComponent::TransformComponent(GameObject* object)
+//	: Component{ object }
+//{
+//}
+//
+//dae::TransformComponent::TransformComponent(GameObject* object, glm::vec2 position)
+//	: Component{ object }, 
+//	m_LocalPosition{ position }
+//{
+//}
+//
+//dae::TransformComponent::TransformComponent(GameObject* object, glm::vec2 position, float rotation)
+//	: Component{ object }, 
+//	m_LocalPosition{ position },
+//	m_LocalRotation{ rotation }
+//{
+//}
+//
+//void dae::TransformComponent::Update()
+//{
+//}
+//
+//void dae::TransformComponent::Render() const
+//{
+//}
+//
+//void dae::TransformComponent::AddLocalPosition(const glm::vec2& offset)
+//{
+//	m_LocalPosition += offset;
+//	SetPositionDirty();
+//}
+//
+//void dae::TransformComponent::AddLocalRotation(const float offset)
+//{
+//	m_LocalRotation += offset;
+//	SetPositionDirty();
+//}
+//
+//void dae::TransformComponent::SetLocalPosition(const glm::vec2& pos)
+//{
+//	m_LocalPosition = pos;
+//	SetPositionDirty();
+//}
+//
+//void dae::TransformComponent::SetLocalRotation(const float angle)
+//{
+//	m_LocalRotation = angle;
+//	SetPositionDirty();
+//}
+//
+//void dae::TransformComponent::SetLocalScale(const glm::vec2& scale)
+//{
+//	m_LocalScale = scale;
+//	SetPositionDirty();
+//}
+//
+//const glm::vec2& dae::TransformComponent::GetLocalPosition()
+//{
+//	return m_LocalPosition;
+//}
+//
+//const glm::vec2& dae::TransformComponent::GetLocalScale()
+//{
+//	return m_LocalScale;
+//}
+//
+//const float dae::TransformComponent::GetLocalRotation()
+//{
+//	return m_LocalRotation;
+//}
+//
+//void dae::TransformComponent::SetPositionDirty()
+//{
+//	m_IsDirty = true;
+//
+//	auto children = GetOwner()->GetChildren();
+//	for (auto child : children)
+//	{
+//		child->GetTransform()->SetPositionDirty();
+//	}
+//}
+//
+//const glm::mat4 dae::TransformComponent::UpdateWorldTransform()
+//{
+//	auto owner = GetOwner()->GetParent();
+//
+//	if (m_IsDirty)
+//	{
+//		glm::mat4 localTransform = glm::mat4(1.0);
+//		localTransform = glm::translate(localTransform, glm::vec3(m_LocalPosition, 0.0f));
+//		localTransform = glm::rotate(localTransform, glm::radians(m_LocalRotation), glm::vec3(0.0f, 0.0f, 1.0f));
+//		localTransform = glm::scale(localTransform, glm::vec3(m_LocalScale, 1.0f));
+//
+//		if (owner == nullptr)
+//		{
+//			m_Transform = localTransform;
+//		}
+//		else
+//		{
+//			auto parentWorldTransform = owner->GetTransform()->UpdateWorldTransform();
+//			m_Transform = parentWorldTransform * localTransform;
+//		}
+//
+//		// Update world position, scale and rotation for all
+//		m_WorldPosition = GetPositionFromMatrix(m_Transform);
+//		m_WorldRotation = GetRotationFromMatrix(m_Transform);
+//		m_WorldScale = GetScaleFromMatrix(m_Transform);
+//	}
+//
+//	m_IsDirty = false;
+//	return m_Transform;
+//}
+//
+//const glm::vec2& dae::TransformComponent::GetWorldPosition()
+//{
+//	if (m_IsDirty)
+//	{
+//		UpdateWorldTransform();
+//	}
+//
+//	return m_WorldPosition;
+//}
+//
+//const float dae::TransformComponent::GetWorldRotation()
+//{
+//	if (m_IsDirty)
+//	{
+//		UpdateWorldTransform();
+//	}
+//
+//	return m_WorldRotation;
+//}
+//
+//const glm::vec2& dae::TransformComponent::GetWorldScale()
+//{
+//	if (m_IsDirty)
+//	{
+//		UpdateWorldTransform();
+//	}
+//
+//	return m_WorldScale;
+//}
+//
+//const glm::mat4& dae::TransformComponent::GetWorldTransform()
+//{
+//	return m_Transform;
+//}
+//
+//// Helpers
+//glm::vec2 dae::TransformComponent::GetPositionFromMatrix(const glm::mat4& matrix)
+//{
+//	return glm::vec2(matrix[3][0], matrix[3][1]);
+//}
+//
+//float dae::TransformComponent::GetRotationFromMatrix(const glm::mat4& matrix)
+//{
+//	glm::vec3 euler = glm::eulerAngles(glm::quat_cast(matrix));
+//	return glm::degrees(euler.z);
+//}
+//
+//glm::vec2 dae::TransformComponent::GetScaleFromMatrix(const glm::mat4& matrix)
+//{
+//	return glm::vec2(glm::length(matrix[0]), glm::length(matrix[1]));
+//}

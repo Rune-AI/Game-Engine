@@ -1,18 +1,36 @@
 #include <stdexcept>
 #include <SDL_ttf.h>
-#include "TextObject.h"
+#include "TextRenderComponent.h"
 #include "Renderer.h"
 #include "Font.h"
 #include "Texture2D.h"
+#include "ResourceManager.h"
+#include "GameObject.h"
+#include "Component.h"
 
-dae::TextObject::TextObject(const std::string& text, std::shared_ptr<Font> font) 
-	: m_needsUpdate(true), m_text(text), m_font(std::move(font)), m_textTexture(nullptr)
-{ }
 
-void dae::TextObject::Update(GameObject& go)
+dae::TextRenderComponent::TextRenderComponent(GameObject* object)
+	: Component{ object }, 
+	m_font{ dae::ResourceManager::GetInstance().LoadFont("Lingua.otf", 36) }
 {
-	go.GetTransfrom();
-	
+}
+
+dae::TextRenderComponent::TextRenderComponent(GameObject* object, const std::string& text)
+	: Component{ object },
+	m_text{ text },
+	m_font{ dae::ResourceManager::GetInstance().LoadFont("Lingua.otf", 36) }
+{
+}
+
+dae::TextRenderComponent::TextRenderComponent(GameObject* object, const std::string& text, std::shared_ptr<Font> font)
+	: Component{ object },
+	m_text{ text },
+	m_font{ font }
+{
+}
+
+void dae::TextRenderComponent::Update()
+{
 	if (m_needsUpdate)
 	{
 		const SDL_Color color = { 255,255,255 }; // only white text is supported now
@@ -32,18 +50,17 @@ void dae::TextObject::Update(GameObject& go)
 	}
 }
 
-void dae::TextObject::Render(const GameObject& go) const
+void dae::TextRenderComponent::Render() const
 {
-	if (m_textTexture != nullptr)
+	/*if (m_textTexture != nullptr)
 	{
-		
-		const auto& pos = go.GetTransfrom().GetPosition();
+		const auto& pos = m_pOwner->GetTransfrom().GetPosition();
 		Renderer::GetInstance().RenderTexture(*m_textTexture, pos.x, pos.y);
-	}
+	}*/
 }
 
 // This implementation uses the "dirty flag" pattern
-void dae::TextObject::SetText(const std::string& text)
+void dae::TextRenderComponent::SetText(const std::string& text)
 {
 	m_text = text;
 	m_needsUpdate = true;
